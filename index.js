@@ -4,45 +4,38 @@ import cors from 'cors'
 const server = express()
 
 server.use(cors())
+server.use(express.json())
 
-let users = [
-    {
-        username: 'bobesponja', 
-        avatar: "https://super.abril.com.br/wp-content/uploads/2020/09/04-09_gato_SITE.jpg?quality=70&strip=info" 
-    },
-    {
-        username: 'ronaldo', 
-        avatar: "https://fogo.com" 
-    }
-]
+let users = []
 
-let tweets = [
-    {
-	username: "bobesponja",
-    tweet: "eu amo o hub"
-    },
-    {
-	username: "ronaldo",
-    tweet: "ronaldo"
-    }
-]
+let tweets = []
 
-function createUser(username, avatar){
-    users.push({
-        username: username,
-        avatar: avatar
-    })
-}
 
-function createTweet(username, tweet){
-    tweets.push({
-        username: username,
-        tweet: tweet
-    })
-}
+server.post('/sign-up', (req,res) => {
+
+    console.log(req.body)
+    
+    users.push(req.body)
+
+    console.log("post user")
+
+    res.send("OK")
+})
+
+server.post('/tweets', (req,res) => {
+    
+    tweets.push(req.body)
+
+    console.log("post tweet")
+
+    res.send("OK")
+})
 
 server.get('/tweets', (req, res) => {
     const getTweets = tweets.map((tweet) => {
+
+        console.log(users)
+        console.log(tweets)
 
         let getUser = users.find(user => user.username == tweet.username)
 
@@ -54,7 +47,13 @@ server.get('/tweets', (req, res) => {
     }
     )
 
-    res.send(getTweets)
+    let lastTen = getTweets
+
+    lastTen = lastTen.reverse()
+
+    lastTen = lastTen.slice(0,9)
+
+    res.send(lastTen)
 })
 
 server.listen(5000)
